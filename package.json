@@ -1,6 +1,6 @@
 {
   "name": "@monet/prescribe",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Tiny, forgiving HTML parser",
   "homepage": "https://github.com/krux/prescribe/",
   "bugs": "https://github.com/krux/prescribe/issues",
@@ -13,7 +13,7 @@
     "type": "git",
     "url": "git://github.com/krux/prescribe.git"
   },
-  "main": "dist/prescribe.js",
+  "main": "dist/@monet/prescribe.js",
   "author": {
     "name": "Derek Brans",
     "web": "http://github.com/dbrans"
