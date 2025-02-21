@@ -1,10 +1,14 @@
 {
   "name": "@appmonet/prescribe",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Tiny, forgiving HTML parser",
   "homepage": "https://github.com/krux/prescribe/",
   "bugs": "https://github.com/krux/prescribe/issues",
   "license": "MIT",
+  "files": [
+    "./src/**/*",
+    "./dist/**/*"
+  ],
   "keywords": [
     "html",
     "parser"
