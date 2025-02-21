@@ -1,7 +1,7 @@
-import * as supports from './supports';
-import * as streamReaders from './streamReaders';
-import fixedReadTokenFactory from './fixedReadTokenFactory';
-import {escapeQuotes} from './utils';
+import { supports } from "./supports";
+import { comment, endTag, atomicTag, startTag, chars } from "./streamReaders";
+import fixedReadTokenFactory from "./fixedReadTokenFactory";
+import { escapeQuotes } from "./utils";
 
 /**
  * Detection regular expressions.
@@ -18,7 +18,15 @@ const detect = {
   endTag: /^<\//,
   atomicTag: /^<\s*(script|style|noscript|iframe|textarea)[\s\/>]/i,
   startTag: /^</,
-  chars: /^[^<]/
+  chars: /^[^<]/,
+};
+
+const streamReaders = {
+  comment,
+  endTag,
+  atomicTag,
+  startTag,
+  chars,
 };
 
 /**
@@ -34,7 +42,7 @@ export default class HtmlParser {
    * @param {boolean} options.autoFix Set to true to automatically fix errors
    * @param {boolean} options.allowInvalidHTML Continue parsing invalid HTML, dropping minimal characters
    */
-  constructor(stream = '', options = {}) {
+  constructor(stream = "", options = {}) {
     this.stream = stream;
 
     let fix = false;
@@ -51,8 +59,12 @@ export default class HtmlParser {
     }
 
     if (fix) {
-      this._readToken = fixedReadTokenFactory(this, fixedTokenOptions, () => this._readTokenImpl());
-      this._peekToken = fixedReadTokenFactory(this, fixedTokenOptions, () => this._peekTokenImpl(this.allowInvalidHTML));
+      this._readToken = fixedReadTokenFactory(this, fixedTokenOptions, () =>
+        this._readTokenImpl(),
+      );
+      this._peekToken = fixedReadTokenFactory(this, fixedTokenOptions, () =>
+        this._peekTokenImpl(this.allowInvalidHTML),
+      );
     } else {
       this._readToken = this._readTokenImpl;
       this._peekToken = () => this._peekTokenImpl(this.allowInvalidHTML);
@@ -115,14 +127,21 @@ export default class HtmlParser {
           const token = streamReaders[type](this.stream);
 
           if (token) {
-            if (token.type === 'startTag' &&
-                (/script|style/i).test(token.tagName)) {
+            if (
+              token.type === "startTag" &&
+              /script|style/i.test(token.tagName)
+            ) {
               return null;
             } else {
               token.text = this.stream.substr(0, token.length);
               return token;
             }
-          } else if (allowInvalidHTML && this.stream.length && token == null && !(ignoredInvalidTags.test(this.stream))) {
+          } else if (
+            allowInvalidHTML &&
+            this.stream.length &&
+            token == null &&
+            !ignoredInvalidTags.test(this.stream)
+          ) {
             return this._consumeInvalidHtml();
           }
         }
@@ -174,7 +193,7 @@ export default class HtmlParser {
    */
   clear() {
     const rest = this.stream;
-    this.stream = '';
+    this.stream = "";
     return rest;
   }
 
@@ -188,9 +207,9 @@ export default class HtmlParser {
   }
 }
 
-HtmlParser.tokenToString = tok => tok.toString();
+HtmlParser.tokenToString = (tok) => tok.toString();
 
-HtmlParser.escapeAttributes = attrs => {
+HtmlParser.escapeAttributes = (attrs) => {
   const escapedAttrs = {};
 
   for (let name in attrs) {
@@ -206,6 +225,7 @@ HtmlParser.supports = supports;
 
 for (let key in supports) {
   if (supports.hasOwnProperty(key)) {
-    HtmlParser.browserHasFlaw = HtmlParser.browserHasFlaw || (!supports[key]) && key;
+    HtmlParser.browserHasFlaw =
+      HtmlParser.browserHasFlaw || (!supports[key] && key);
   }
 }
